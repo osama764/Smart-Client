@@ -489,29 +489,29 @@ fetch('https://worldtimeapi.org/api/ip')
   })
   .catch(error => console.log(error));
 
-function updateStatus() {
-  const currentTime = new Date();
-
-  if (currentTime.getHours() >= 6 && currentTime.getHours() < 18) {
-    currentStatus = 0;
-  } else {
-    currentStatus = 1;
-  }
-
-  const roomsRef = firebase.database().ref("Rooms");
-  const frontRoomRef = roomsRef.child("2");
-
-  frontRoomRef.once("value", snapshot => {
-    const devicesArray = snapshot.val().devices || [];
-
-    devicesArray.forEach((device, i) => {
-      const deviceRef = frontRoomRef.child("devices").child(i.toString());
-      deviceRef.update({ status: currentStatus });
+  function updateStatus() {
+    const currentTime = new Date();
+  
+    if (currentTime.getHours() >= 6 && currentTime.getHours() < 18) {
+      currentStatus = 0;
+    } else {
+      currentStatus = 1;
+    }
+  
+    const roomsRef = firebase.database().ref("Rooms");
+    const frontRoomRef = roomsRef.child("2");
+  
+    frontRoomRef.once("value", snapshot => {
+      const devicesArray = snapshot.val().devices || [];
+  
+      devicesArray.forEach((device, i) => {
+        setTimeout(() => {
+          const deviceRef = frontRoomRef.child("devices").child(i.toString());
+          deviceRef.update({ status: currentStatus });
+        }, i * 1000);
+      });
     });
-  });
-}
-
-
+  }
 
 // initialization of two variables to store index and name of device
 let index;
