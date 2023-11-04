@@ -111,21 +111,25 @@ addNewRoom.addEventListener("click", (e) => {
 //   }
 // }
 
+
+
 async function addNewRoomInFirebase() {
   // استلام القيم من حقول الإدخال لاسم الغرفة وصورة الغرفة
   const nameRoomValue = nameRoom.value;
   const imageRoomValue = imageRoom.value;
 
   try {
-    // الحصول على قائمة الغرف الموجودة في قاعدة البيانات
     const response = await fetch('https://smart-test-ee901-default-rtdb.firebaseio.com/Rooms.json');
     const responseData = await response.json();
 
     // حساب الـ index الجديد بناءً على عدد الغرف الموجودة حاليًا
-    const index = Object.keys(responseData).length;
+    let index = 0;
+    if (responseData) {
+      index = Object.keys(responseData).length;
+    }
 
     // إضافة الغرفة الجديدة
-    await fetch(`https://smart-test-ee901-default-rtdb.firebaseio.com/Rooms/${index}.json`, {
+    await fetch(`https://smart-f57a7-default-rtdb.firebaseio.com/Rooms/${index}.json`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -135,6 +139,7 @@ async function addNewRoomInFirebase() {
         image: imageRoomValue,
         devices: [],
         devicesPush: [],
+        id:index
       }),
     });
 
@@ -144,6 +149,7 @@ async function addNewRoomInFirebase() {
     console.error('فشل في إضافة الغرفة:', error.message);
   }
 }
+
 function DisplayData() {
   // إنشاء طلب HTTP
   const request = new XMLHttpRequest();
@@ -157,27 +163,25 @@ function DisplayData() {
     if (request.status === 200) {
       // تحويل البيانات إلى كائن JSON
       const data = JSON.parse(request.responseText);
-
+console.log(data)
       // حذف جميع العناصر الحالية
       contentRooms.innerHTML = '';
 
-      // عرض بيانات الغرف
-      for (let key in data) {
-        if (data.hasOwnProperty(key)) {
-          const room = data[key];
-          const roomId = key; // معرف الغرفة
-
+      Object.values(data).forEach(room => {
+        if(room){
           let card = `
-            <div class="card border-0 p-3 m-2 text-center" style="background-image: url(../images/${room.image}.jpg);">
-              <i class="fa-solid fa-trash-can deletbtnThisRoom"></i>
-              <h3 class="mt-3 mb-3 room__title">${room.Name}</h3>
-              <button class="btn btn-warning visit">فتح الغرفة</button>
-              <span style="opacity: 0">${roomId}</span>
-            </div>
-          `;
-          contentRooms.innerHTML += card;
+          <div class="card border-0 p-3 m-2 text-center" style="background-image: url(../images/${room.image}.jpg);">
+            <i class="fa-solid fa-trash-can deletbtnThisRoom"></i>
+            <h3 class="mt-3 mb-3 room__title">${room.Name}</h3>
+            <button class="btn btn-warning visit">فتح الغرفة</button>
+            <span style="opacity: 0">${room.id}</span>
+          </div>
+        `;
+        console.log(room.id)
+        contentRooms.innerHTML += card;
         }
-      }
+    
+      });
     } else {
       // رسالة خطأ في حالة فشل الطلب
       alert('حدث خطأ أثناء استرداد بيانات الغرف');
