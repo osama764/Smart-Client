@@ -111,8 +111,6 @@ addNewRoom.addEventListener("click", (e) => {
 //   }
 // }
 
-
-
 async function addNewRoomInFirebase() {
   // استلام القيم من حقول الإدخال لاسم الغرفة وصورة الغرفة
   const nameRoomValue = nameRoom.value;
@@ -129,7 +127,7 @@ async function addNewRoomInFirebase() {
     }
 
     // إضافة الغرفة الجديدة
-    await fetch(`https://smart-f57a7-default-rtdb.firebaseio.com/Rooms/${index}.json`, {
+    await fetch(`https://smart-test-ee901-default-rtdb.firebaseio.com/Rooms/${index}.json`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -139,7 +137,7 @@ async function addNewRoomInFirebase() {
         image: imageRoomValue,
         devices: [],
         devicesPush: [],
-        id:index
+        id:JSON.stringify(index)
       }),
     });
 
@@ -223,6 +221,7 @@ contentRooms.addEventListener("click", (e) => {
     // uid is id that use to delete this Room 
     let uid = e.target.parentElement.lastElementChild.innerHTML
     // passing uid in function to delete this Room
+
     deleteRoom(uid)
   
 
@@ -371,6 +370,5 @@ saveData.addEventListener("click",()=>{
 closeSetting.addEventListener("click",()=>{
   updateSetting.style.top="-75%"
 })
-
 
 
